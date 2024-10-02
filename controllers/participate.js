@@ -138,13 +138,22 @@ export const readManageOne = (req, res) => {
 export const updateStatus = (req, res) => {
   const { par_status, std_ID, act_ID } = req.body;
 
+  // Ensure std_ID is an array
+  if (!Array.isArray(std_ID) || std_ID.length === 0) {
+    return res.status(400).json({ error: "std_ID must be a non-empty array." });
+  }
+
+  // Create placeholders for the std_ID array
+  const placeholders = std_ID.map(() => '?').join(',');
   const sql1 = `
         UPDATE participate 
         SET par_status = ?
-        WHERE act_ID = ? AND std_ID in (?)
+        WHERE act_ID = ? AND std_ID IN (${placeholders})
     `;
 
-  db.query(sql1, [par_status, act_ID, std_ID], (err, result) => {
+  const values = [par_status, act_ID, ...std_ID];
+
+  db.query(sql1, values, (err, result) => {
     if (err) {
       console.error("SQL Error:", err);
       return res.status(500).json({
@@ -157,6 +166,7 @@ export const updateStatus = (req, res) => {
     });
   });
 };
+
 
 
 
