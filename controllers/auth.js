@@ -199,7 +199,7 @@ export const register = async (req, res) => {
           values = [username,fname, lname, mobile, email, loginID, sec_ID];
         } else {
           sql2 =
-            "INSERT INTO admin (a.fname, a.lname, a.mobile, a.email, login_ID) VALUES (?, ?, ?, ?, ?)";
+            "INSERT INTO admin (a_fname, a_lname, a_mobile, a_email, login_ID) VALUES (?, ?, ?, ?, ?)";
           values = [fname, lname, mobile, email, loginID];
         }
 
