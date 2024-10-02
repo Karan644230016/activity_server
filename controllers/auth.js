@@ -165,8 +165,8 @@ export const register = async (req, res) => {
 
       // Insert section if sec_name is provided
       if (sec_name) {
-        const q = `INSERT INTO section (sec_name,t_ID) VALUES (?,?)`;
-        db.query(q, [sec_name,loginID], (err, results) => {
+        const q = `INSERT INTO section (sec_name) VALUES (?)`;
+        db.query(q, [sec_name], (err, results) => {
           if (err) {
             console.error("Error inserting section:", err);
             return res.status(500).json({
@@ -193,30 +193,74 @@ export const register = async (req, res) => {
           sql2 =
             "INSERT INTO teacher (t_fname, t_lname, t_mobile, t_email, login_ID) VALUES (?, ?, ?, ?, ?)";
           values = [fname, lname, mobile, email, loginID];
+
+          // Insert teacher details
+          db.query(sql2, values, (err, result) => {
+            if (err) {
+              console.error(`Error inserting teacher:`, err);
+              return res.status(500).json({
+                message: `Failed to register teacher`,
+                error: err,
+              });
+            }
+            const t_ID = results.insertId;
+            
+            // Update section with teacher ID
+            const sql3 = "UPDATE section SET t_ID = ? WHERE sec_ID = ?";
+            db.query(sql3, [t_ID, sec_ID], (err, updateResult) => {
+              if (err) {
+                console.error("Error updating section with teacher ID:", err);
+                return res.status(500).json({
+                  message: "Failed to update section with teacher ID",
+                  error: err,
+                });
+              }
+
+              res.status(201).json({
+                message: `Teacher registered successfully and section updated`,
+                status: "ok",
+              });
+            });
+          });
         } else if (role === "student") {
           sql2 =
-            "INSERT INTO student (std_ID,std_fname, std_lname, std_mobile, std_email, login_ID, sec_ID) VALUES (?, ?, ?, ?, ?, ?,?)";
-          values = [username,fname, lname, mobile, email, loginID, sec_ID];
+            "INSERT INTO student (std_ID, std_fname, std_lname, std_mobile, std_email, login_ID, sec_ID) VALUES (?, ?, ?, ?, ?, ?, ?)";
+          values = [username, fname, lname, mobile, email, loginID, sec_ID];
+
+          db.query(sql2, values, (err, result) => {
+            if (err) {
+              console.error(`Error inserting student:`, err);
+              return res.status(500).json({
+                message: `Failed to register student`,
+                error: err,
+              });
+            }
+
+            res.status(201).json({
+              message: "Student registered successfully",
+              status: "ok",
+            });
+          });
         } else {
           sql2 =
             "INSERT INTO admin (a_fname, a_lname, a_mobile, a_email, login_ID) VALUES (?, ?, ?, ?, ?)";
           values = [fname, lname, mobile, email, loginID];
-        }
 
-        db.query(sql2, values, (err, result) => {
-          if (err) {
-            console.error(`Error inserting ${role}:`, err);
-            return res.status(500).json({
-              message: `Failed to register ${role}`,
-              error: err,
+          db.query(sql2, values, (err, result) => {
+            if (err) {
+              console.error(`Error inserting admin:`, err);
+              return res.status(500).json({
+                message: `Failed to register admin`,
+                error: err,
+              });
+            }
+
+            res.status(201).json({
+              message: "Admin registered successfully",
+              status: "ok",
             });
-          }
-
-          res.status(201).json({
-            message: `${role} registered successfully`,
-            status: "ok",
           });
-        });
+        }
       }
     });
   } catch (error) {
@@ -227,6 +271,7 @@ export const register = async (req, res) => {
     });
   }
 };
+
 
 
 // create user  table login
