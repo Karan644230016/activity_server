@@ -190,20 +190,34 @@ export const readActivityOne = (req, res) => {
 
 export const deleteActivity = (req, res) => {
   const { id } = req.params;
-  const sql = "DELETE FROM activity WHERE act_ID = ?";
 
-  db.query(sql, [id], (err, result) => {
+  // Delete related records in 'participate' table first
+  const sqlDeleteParticipate = "DELETE FROM participate WHERE act_ID = ?";
+
+  db.query(sqlDeleteParticipate, [id], (err, result) => {
     if (err) {
       return res.status(500).json({
         error: err.message,
       });
     }
-    return res.json({
-      message: "Activity deleted successfully",
-      result,
+
+    // Then delete the activity after related records are removed
+    const sqlDeleteActivity = "DELETE FROM activity WHERE act_ID = ?";
+    db.query(sqlDeleteActivity, [id], (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          error: err.message,
+        });
+      }
+
+      res.json({
+        message: "Activity and related records deleted successfully",
+        result,
+      });
     });
   });
 };
+
 
 // update status
 export const updateStatus = (req, res) => {
