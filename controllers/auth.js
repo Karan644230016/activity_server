@@ -165,8 +165,8 @@ export const register = async (req, res) => {
 
       // Insert section if sec_name is provided
       if (sec_name) {
-        const q = `INSERT INTO section (sec_name) VALUES (?)`;
-        db.query(q, [sec_name], (err, results) => {
+        const q = `INSERT INTO section (sec_name,t_ID) VALUES (?,?)`;
+        db.query(q, [sec_name,loginID], (err, results) => {
           if (err) {
             console.error("Error inserting section:", err);
             return res.status(500).json({
