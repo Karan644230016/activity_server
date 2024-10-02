@@ -15,7 +15,7 @@ LEFT JOIN participate p ON a.act_ID = p.act_ID -- Assuming 'participate' table f
 WHERE
     a.act_status = 'เปิดลงทะเบียน'
     GROUP BY 
-    a.act_ID, t.t_ID;
+     a.act_ID, t.t_ID, s.sec_ID
 
 
 
