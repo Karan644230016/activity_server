@@ -203,11 +203,11 @@ export const register = async (req, res) => {
                 error: err,
               });
             }
-            const t_ID = results.insertId;
+            const t_ID = result.insertId; // Correct variable for teacher ID
             
             // Update section with teacher ID
             const sql3 = "UPDATE section SET t_ID = ? WHERE sec_ID = ?";
-            db.query(sql3, [t_ID, sec_ID], (err, updateResult) => {
+            db.query(sql3, [t_ID, newSecID], (err, updateResult) => {
               if (err) {
                 console.error("Error updating section with teacher ID:", err);
                 return res.status(500).json({
@@ -271,6 +271,7 @@ export const register = async (req, res) => {
     });
   }
 };
+
 
 
 
