@@ -6,6 +6,7 @@ export const user = (req, res) => {
         SELECT 
             l.*, 
             s.*,
+            COALESCE(t.t_ID, st.std_ID, a.a_ID) AS ID,
             COALESCE(t.t_fname, st.std_fname, a.a_fname) AS fname,
             COALESCE(t.t_lname, st.std_lname, a.a_lname) AS lname,
             COALESCE(t.t_email, st.std_email, a.a_email) AS email,
