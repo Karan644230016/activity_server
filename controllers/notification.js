@@ -80,11 +80,11 @@ export const updateAct_title = (req, res) => {
   });
 };
 export const deleteNews = (req, res) => {
-  const { act_title } = req.body;
+  const { topic,description } = req.body;
   const sql = `
             DELETE FROM news WHERE news_ID = ?
                 `;
-  db.query(sql, [act_title], (err, result) => {
+  db.query(sql, [topic,description], (err, result) => {
     if (err) {
       return res.status(500).json({
         error: err.message,
